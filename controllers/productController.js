@@ -20,7 +20,7 @@ export function createProduct(req, res) {
     if (req.user == null) {
         res.json({
             // FIX 2: 'massage' typo fixed to 'message'
-            message: "You are not authorized to create a product !!!"
+            message: "You are not authorized to create a product !"
         });
         return;
     }
