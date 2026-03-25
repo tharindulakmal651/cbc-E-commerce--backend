@@ -44,3 +44,17 @@ export function loginUser(req, res) {
         });
     });
 }
+
+
+export function deleteUser(req, res) {
+    User.deleteOne({ email: req.params.email }).then(() => {
+        res.json({
+            message: "User deleted successfully !!!"
+        });
+    }).catch((err) => {
+        res.status(500).json({
+            message: "Error deleting User !!!", error: err.message
+        });
+    });
+    
+}
