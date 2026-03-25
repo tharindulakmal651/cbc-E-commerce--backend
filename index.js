@@ -16,20 +16,17 @@ const mongoURL = "mongodb+srv://admin:123@cluster0.n1fvej0.mongodb.net/?appName=
 mongoose.connect(mongoURL);
 
 mongoose.connection.once("open", () => {
-    console.log("Connected  MongoDB");
+    console.log("Connected to MongoDB");
 });
 
 app.use(bodyParser.json());
 
 app.use(
     (req, res, next) => {
-        // FIX 1: token was never declared — added const and correct extraction
         const token = req.header("Authorization")?.replace("Bearer ", "");
-        
 
         if (token != null) {
             jwt.verify(token, "cbc-secret-key-7973", (err, decoded) => {
-                // FIX 2: 'error' was undefined — changed to 'err'
                 if (!err) {
                     req.user = decoded;
                 }
