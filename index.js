@@ -8,10 +8,15 @@ import Product from "./models/product.js";
 import userRouter from "./routes/userRouter.js";
 import User from "./models/user.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
-const mongoURL = "mongodb+srv://admin:123@cluster0.n1fvej0.mongodb.net/?appName=Cluster0";
+const mongoURL = process.env.MONGO_DB_URL;
+
+//const mongoURL = "mongodb+srv://admin:123@cluster0.n1fvej0.mongodb.net/?appName=Cluster0";
 
 mongoose.connect(mongoURL);
 
