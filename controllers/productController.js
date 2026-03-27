@@ -1,16 +1,15 @@
 import Product from "../models/product.js";
 import jwt from "jsonwebtoken";
 
-export function getProduct(req, res) {
-    Product.find()
-        .then((ProductsList) => {
-            res.json({ list: ProductsList });
+export async function getProduct(req, res) {
+  
+    const productList = await Product.find()
+    res.json(
+        {
+            list: productList
         })
-        .catch((err) => {
-            res.status(500).json({
-                message: "Error retrieving Product", error: err.message
-            });
-        });
+        
+        
 }
 
 export function createProduct(req, res) {
