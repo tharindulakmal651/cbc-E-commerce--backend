@@ -1,6 +1,9 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
+dotenv.config();
 export function createUser(req, res) {
     const newUserData = req.body;
     newUserData.password = bcrypt.hashSync(newUserData.password, 10);
