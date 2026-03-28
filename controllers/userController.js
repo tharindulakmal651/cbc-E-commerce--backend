@@ -3,61 +3,59 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-dotenv.config();
+// Create new user
 export function createUser(req, res) {
     const newUserData = req.body;
+
+    // Only admins can create admin accounts
+    if (newUserData.type === "admin") {
+        if (!req.user) {
+            return res.status(401).json({ message: "Please login as administrator to create admin account!" });
+        }
+        if (req.user.type !== "admin") {
+            return res.status(403).json({ message: "Only administrators can create admin accounts!" });
+        }
+    }
+
     newUserData.password = bcrypt.hashSync(newUserData.password, 10);
 
     const user = new User(newUserData);
-    user.save().then(() => {
-        res.json({
-            message: "User created successfully "
-        });
-    }).catch(() => {
-        res.json({
-            message: "Error creating User !!!"
-        });
-    });
+    user.save()
+        .then(() => res.json({ message: "User created successfully!" }))
+        .catch(err => res.status(500).json({ message: "Error creating user", error: err.message }));
 }
 
+// User login
 export function loginUser(req, res) {
-    User.find({ email: req.body.email }).then((users) => {
-        if (users.length == 0) {
-            res.json({
-                message: "User not found !!!"
-            });
-        } else {
-            const user = users[0];
-            const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password);
+    User.findOne({ email: req.body.email })
+        .then(user => {
+            if (!user) return res.status(404).json({ message: "User not found!" });
 
-            if (isPasswordCorrect) {
-                res.json({
-                    message: "Login successful !!!"
-                });
-            } else {
-                res.json({
-                    message: "Incorrect password !!!"
-                });
-            }
-        }
-    // FIX: Missing .catch() handler added
-    }).catch((err) => {
-        res.status(500).json({
-            message: "Error during login !!!", error: err.message
-        });
-    });
+            const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password);
+            if (!isPasswordCorrect) return res.status(401).json({ message: "Incorrect password!" });
+
+            // Generate JWT token
+            const token = jwt.sign(
+                { id: user._id, email: user.email, type: user.type },
+                process.env.JWT_SECRET,
+                { expiresIn: "1h" }
+            );
+
+            res.json({
+                message: "Login successful!",
+                token,
+                user: {
+                    email: user.email,
+                    type: user.type
+                }
+            });
+        })
+        .catch(err => res.status(500).json({ message: "Error during login", error: err.message }));
 }
 
-
+// Delete user
 export function deleteUser(req, res) {
-    User.deleteOne({ email: req.params.email }).then(() => {
-        res.json({
-            message: "User deleted successfully !!!"
-        });
-    }).catch((err) => {
-        res.status(500).json({
-            message: "Error deleting User !!!", error: err.message
-        });
-    });
-    
-} 
+    User.deleteOne({ email: req.params.email })
+        .then(() => res.json({ message: "User deleted successfully!" }))
+        .catch(err => res.status(500).json({ message: "Error deleting user", error: err.message }));
+}
