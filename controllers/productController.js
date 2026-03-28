@@ -1,51 +1,47 @@
 import Product from "../models/product.js";
 import jwt from "jsonwebtoken";
 
-export async function getProduct(req, res) {
+
+
+export  function getProducts(req, res) {
   
-    const productList = await Product.find()
-    res.json(
-        {
-            list: productList
-        })
+    Product.find({}).then((product) => {
+        
+            res.json(product)
+        });
+    
         
         
 }
 
-export function createProduct(req, res) {
-    // FIX 1: 'req,user' was a syntax error — changed to 'req.user'
-    console.log(req.user);
 
-    if (req.user == null) {
-        res.json({
-            // FIX 2: 'massage' typo fixed to 'message'
-            message: "You are not authorized to create a product !"
-        });
-        return;
-    }
-
-    if (req.user.type !== "admin") {
-        res.json({
-            // FIX 3: 'massage' typo fixed to 'message'
-            message: "Only admin can create a product !!!"
-        });
-        return;
-    }
-
-    // FIX 4: 'req.user' should be 'req.body' — we create product from request body, not user token
-    const NewProduct = new Product(req.body);
-
-    NewProduct.save().then(() => {
-        res.json({
-            message: "Product created successfully !!!"
-        });
-    }).catch((err) => {
-        res.status(500).json({
-            message: "Error creating Product !!!", error: err.message
-        });
+export function createProducts(req, res) {
+    
+   if(!isAdmin(req)){
+    res.json({
+        message: "please login as administrator to add product !!!"
     });
+    return;
+
+
+   }
+   const newProductData = req.body;
+
+   const product = new Product(newProductData);
+   product.save().then(() => {
+    res.json({
+        message: "Product created successfully !!!"
+    });
+   }).catch((error) => {
+    res.json({
+        message: error
+    })
+   })
+
+
 }
 
+/*
 export function deleteProduct(req, res) {
     Product.deleteOne({ name: req.params.name }).then(() => {
         res.json({
@@ -71,10 +67,10 @@ export function getProductByName(req, res) {
         });
     });
 }
+*/
 
 
-
-exprot function isAdmin(req) {
+export function isAdmin(req) {
     if(req.user ==null){
         return false;
     }

@@ -2,11 +2,11 @@ import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 
-//import productRouter from "./routes/productRouter.js";
+import productRouter from "./routes/productRouter.js";
 //import Product from "./models/product.js";
 
 import userRouter from "./routes/userRouter.js";
-import User from "./models/user.js";
+//import User from "./models/user.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -42,7 +42,7 @@ app.use(
     }
 );
 
-//app.use("/api/products", productRouter);
+app.use("/api/products", productRouter);
 app.use("/api/users", userRouter);
 
 app.listen(5000, () => {
