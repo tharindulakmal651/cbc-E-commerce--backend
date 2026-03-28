@@ -8,12 +8,18 @@ export function createUser(req, res) {
     const newUserData = req.body;
 
     // Only admins can create admin accounts
-    if (newUserData.type === "admin") {
-        if (!req.user) {
-            return res.status(401).json({ message: "Please login as administrator to create admin account!" });
+    if (newUserData.type =="admin") {
+        if (req.user == null) {
+             res.json({ 
+                message: "Please login as administrator to create admin account!"
+             });
+             return;
         }
         if (req.user.type !== "admin") {
-            return res.status(403).json({ message: "Only administrators can create admin accounts!" });
+             res.json({ 
+                message: "Only administrators can create admin accounts!"
+             });
+             return;
         }
     }
 
