@@ -1,5 +1,5 @@
 import Oder from "../models/order.js";
-import {isCustomer} from "../userController.js";
+import {isCustomer} from  "controllers/orderController.js"
 
 export async function createOrder(req, res) {
     //take the latest product id
@@ -40,6 +40,21 @@ export async function createOrder(req, res) {
         });
 
 
+    }
+}
+
+
+export async function getOrders(req, res) {
+    try{
+        const orders = await Oder.find({
+            email: req.user.email
+        });
+
+        res.json(order)
+    }catch(error){
+        res.status(500).json({
+            message:error.message
+        });
     }
 }
 
