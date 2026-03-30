@@ -1,15 +1,17 @@
 import mongoose from "mongoose";
 
 const orderSchema = mongoose.Schema({ 
-    orderId: {
+  orderId: {
     type: String,
     required: true,
     unique: true
   },
+
   email: {
     type: String,
     required: true 
   }, 
+
   orderedItems: [
     {
       name: {
@@ -17,7 +19,7 @@ const orderSchema = mongoose.Schema({
         required: true
       },  
       
-      price : {
+      price: {
         type: Number,
         required: true
       },
@@ -30,41 +32,43 @@ const orderSchema = mongoose.Schema({
       image: {
         type: String,
         required: true
-      },
-    }]
+      }
+    }
+  ],   // ✅ FIXED (comma added here)
 
+  date: {
+    type: Date,              // 🔥 better to use Date instead of Number
+    default: Date.now
+  },
 
-    date: {
-        type: Number,
-        default: Date.now
-    },
-    paymentId: {
-        type: String,
-        
-    },
-    status: {
-        type: String,
-        default: "preparing"
-    },
-    notes : {
-        type: String,
-        
-    },
-    name:{
-        type: String,
-        required: true
+  paymentId: {
+    type: String
+  },
 
-    },
-    address: {
-        type: String,
-        required: true
-    },
-    phone: {
-        type: String,
-        required: true
-    }  
+  status: {
+    type: String,
+    default: "preparing"
+  },
 
-})
+  notes: {
+    type: String
+  },
+
+  name: {
+    type: String,
+    required: true
+  },
+
+  address: {
+    type: String,
+    required: true
+  },
+
+  phone: {
+    type: String,
+    required: true
+  }  
+});
 
 const Order = mongoose.model("Order", orderSchema);
 

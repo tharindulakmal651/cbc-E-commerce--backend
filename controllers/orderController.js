@@ -1,60 +1,69 @@
 import Oder from "../models/order.js";
-import {isCustomer} from  "controllers/orderController.js"
+// ✅ FIXED: Import isCustomer from productController (this is where it lives)
+import { isCustomer } from "../controllers/productController.js";
 
+// Create Order
 export async function createOrder(req, res) {
-    //take the latest product id
-    //cbc001
-
-    try{
-      const latestOrder = await Oder.findOne().sort({ date: -1 }).limit(1);
-
-      let orderId
-      if(latestOrder.length === 0){
-        orderId = "CBC0001";
-
-    }else{
-      const currentOrderId = latestOrder[0].orderId;
-
-      const numberString =currentOrderId.replace("CBC", "")
-      
-      const number = parseInt(numberString);
-
-      const newNumber = (number + 1).toString().padStart(4, "0");
-        orderId = "CBC" + newNumber
+    // ✅ FIXED: Guard — only logged-in customers can create orders
+    if (!isCustomer(req)) {
+        return res.status(403).json({
+            message: "Please login as a customer to create an order !!!"
+        });
     }
-    const newOrderData = req.body
-    newOrderData.orderId = orderId
-    newOrderData.email=req.user.email
 
-    const order = new Oder(newOrderData)
-    awit order.save()
+    try {
+        const latestOrder = await Oder.findOne().sort({ date: -1 });
 
-    res.json({
-        message: "Order created successfully !!!"
-    })
+        let orderId;
 
+        if (!latestOrder) {
+            orderId = "CBC0001";
+        } else {
+            const currentOrderId = latestOrder.orderId;
+            const numberString = currentOrderId.replace("CBC", "");
+            const number = parseInt(numberString);
+            const newNumber = (number + 1).toString().padStart(4, "0");
+            orderId = "CBC" + newNumber;
+        }
 
-    }catch(error){
-        res.status(500).json({
-            message:error.message
+        const newOrderData = req.body;
+        newOrderData.orderId = orderId;
+        newOrderData.email = req.user.email;
+
+        const order = new Oder(newOrderData);
+        await order.save();
+
+        res.json({
+            message: "Order created successfully !!!",
+            orderId: orderId
         });
 
-
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
     }
 }
 
-
+// Get Orders
 export async function getOrders(req, res) {
-    try{
+    // ✅ FIXED: Guard — only logged-in customers can view their orders
+    if (!isCustomer(req)) {
+        return res.status(403).json({
+            message: "Please login as a customer to view orders !!!"
+        });
+    }
+
+    try {
         const orders = await Oder.find({
             email: req.user.email
         });
 
-        res.json(order)
-    }catch(error){
+        res.json(orders);
+
+    } catch (error) {
         res.status(500).json({
-            message:error.message
+            message: error.message
         });
     }
 }
-
