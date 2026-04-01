@@ -27,6 +27,44 @@ export async function createOrder(req, res) {
         }
 
         const newOrderData = req.body;
+
+        const newProductArray =[]
+
+        for(let i=0;i<newOrderData.orderdItems.length;i++){
+                  
+            const product = await Product.findOne({
+                productId: newOrderData.orderdItems[i].productId 
+            })
+
+            if(product ==null){
+                res.json({
+                    message: "product with id "+ newOrderData.orderdItems[i].productId  +" not found !!!" 
+                }) 
+                return;
+        }
+
+        newProductArray[i] ={
+            //productId: product.productId,
+            name: product.productName,
+            price: product.price,
+            quantity: newOrderData.orderdItems[i].quantity,
+            image: product.images[0]
+        }
+        
+    }
+    console.log(newProductArray);
+
+    newOrderData.orderedItems = newProductArray;
+
+
+
+
+
+
+
+
+
+     
         newOrderData.orderId = orderId;
         newOrderData.email = req.user.email;
 
@@ -36,13 +74,14 @@ export async function createOrder(req, res) {
         res.json({
             message: "Order created successfully !!!",
             orderId: orderId
-        });
+        });   
+
 
     } catch (error) {
         res.status(500).json({
             message: error.message
         });
-    }
+    }    
 }
 
 // Get Orders
