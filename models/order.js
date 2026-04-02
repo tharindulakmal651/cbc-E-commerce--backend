@@ -31,13 +31,13 @@ const orderSchema = mongoose.Schema({
       
       image: {
         type: String,
-        required: true
+        required: false   // ✅ FIXED: not required, since product may have no images
       }
     }
-  ],   // ✅ FIXED (comma added here)
+  ],
 
   date: {
-    type: Date,              // 🔥 better to use Date instead of Number
+    type: Date,
     default: Date.now
   },
 

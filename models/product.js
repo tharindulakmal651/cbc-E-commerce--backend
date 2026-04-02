@@ -1,48 +1,30 @@
 import mongoose from "mongoose";
 
 const productSchema = mongoose.Schema({
-  productId: {
-    type: String,
-    required: true,
-    unique: true
-  },
+    productId: {
+        type: String,
+        required: true,
+        unique: true
+    },
 
-  productName: {   
-    type: String,
-    required: true
-  },
+    name: {
+        type: String
+    },
 
-  altNames: [
-    {
-      type: String
+    productName: {
+        type: String
+    },
+
+    price: {
+        type: Number,
+        required: true
+    },
+
+    images: [String],   // ✅ preferred
+
+    image: {
+        type: String    // ✅ fallback
     }
-  ],  
-
-  images: [
-    {
-      type: String
-    }
-  ],  
-
-  price: {
-    type: Number,
-  //  required: true
-  },
-
-  lastPrice: {
-    type: Number,
-   // required: true
-  },
-
-  stock: {
-    type: Number,
-    required: true
-  },
-
-  description: {
-    type: String,
-    required: true
-  }
 });
 
 const Product = mongoose.model("Product", productSchema);

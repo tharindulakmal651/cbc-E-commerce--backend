@@ -1,4 +1,4 @@
-import Order from "../models/order.js";   // ✅ FIXED (Oder → Order)
+import Order from "../models/order.js";
 import Product from "../models/product.js";
 import { isCustomer } from "../controllers/productController.js";
 
@@ -36,17 +36,32 @@ export async function createOrder(req, res) {
                 productId: item.productId
             });
 
+            // ❌ Product not found
             if (!product) {
-                return res.json({
-                    message: "Product with id " + item.productId + " not found !!!"
+                return res.status(400).json({
+                    message: "Product not found: " + item.productId
+                });
+            }
+
+            const name = product.productName || product.name;
+            const price = product.price;
+            const image =
+                (product.images && product.images.length > 0)
+                    ? product.images[0]
+                    : product.image || "https://placehold.co/300x300?text=No+Image"; // ✅ FIXED: fallback image
+
+            // ❌ Check only name and price — image always has a fallback
+            if (!name || !price) {
+                return res.status(400).json({
+                    message: "Product data incomplete for: " + item.productId
                 });
             }
 
             newProductArray.push({
-                name: product.name,
-                price: product.price,
+                name: name,
+                price: price,
                 quantity: item.quantity,
-                image: product.images[0]
+                image: image
             });
         }
 
@@ -70,7 +85,8 @@ export async function createOrder(req, res) {
     }
 }
 
-// ✅ Get Orders (THIS WAS YOUR ERROR 🔥)
+
+// ✅ Get Orders
 export async function getOrders(req, res) {
 
     if (!isCustomer(req)) {
