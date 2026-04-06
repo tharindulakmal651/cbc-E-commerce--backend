@@ -65,3 +65,4 @@ export function deleteUser(req, res) {
         .then(() => res.json({ message: "User deleted successfully!" }))
         .catch(err => res.status(500).json({ message: "Error deleting user", error: err.message }));
 }
+
