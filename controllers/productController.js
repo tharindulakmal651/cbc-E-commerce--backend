@@ -13,7 +13,7 @@ export function createProducts(req, res) {
     if (!isAdmin(req)) {
         // ✅ FIXED: Return proper 403 status instead of 200.
         return res.status(403).json({
-            message: "Please login as administrator to add product !!!"
+            message: "Please login as administrator to add product !"
         });
     }
 
@@ -22,7 +22,7 @@ export function createProducts(req, res) {
 
     product.save().then(() => {
         res.json({
-            message: "Product created successfully !!!"
+            message: "Product created successfully !"
         });
     }).catch((error) => {
         // ✅ FIXED: Return error.message (string) instead of raw error object

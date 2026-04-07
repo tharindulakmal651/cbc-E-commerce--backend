@@ -35,10 +35,10 @@ export function createUser(req, res) {
 export function loginUser(req, res) {
     User.findOne({ email: req.body.email })
         .then(user => {
-            if (!user) return res.status(404).json({ message: "User not found!" });
+            if (!user) return res.status(404).json({ message: "User not found !" });
 
             const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password);
-            if (!isPasswordCorrect) return res.status(401).json({ message: "Incorrect password!" });
+            if (!isPasswordCorrect) return res.status(401).json({ message: "Incorrect password !" });
 
             // Generate JWT token
             const token = jwt.sign(

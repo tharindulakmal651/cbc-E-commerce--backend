@@ -7,7 +7,7 @@ export async function createOrder(req, res) {
 
     if (!isCustomer(req)) {
         return res.status(403).json({
-            message: "Please login as a customer to create an order !!!"
+            message: "Please login as a customer to create an order !"
         });
     }
 
