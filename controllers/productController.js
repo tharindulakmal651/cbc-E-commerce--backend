@@ -11,7 +11,7 @@ export function getProducts(req, res) {
 
 export function createProducts(req, res) {
     if (!isAdmin(req)) {
-        // ✅ FIXED: Return proper 403 status instead of 200
+        // ✅ FIXED: Return proper 403 status instead of 200.
         return res.status(403).json({
             message: "Please login as administrator to add product !!!"
         });
